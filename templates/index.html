@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Lyrics Downloader</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-5">Download Lyrics for Music Files</h1>
+      <form method="post">
+        <div class="form-group">
+          <label for="directory">Directory Path</label>
+          <input type="text" class="form-control" id="directory" name="directory" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Download Lyrics</button>
+      </form>
+      {% if error %}
+      <div class="alert alert-danger mt-3">
+        {{ error }}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
