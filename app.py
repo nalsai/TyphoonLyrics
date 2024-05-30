@@ -38,7 +38,6 @@ def remove_prefix(text, prefix):
 
 def find_music_files(directory):
     """Recursively find all music files in the given directory and its subdirectories."""
-    music_files = []
     global working_directory
     working_directory = directory
     print(working_directory)
@@ -47,7 +46,6 @@ def find_music_files(directory):
             if file.lower().endswith(MUSIC_EXTENSIONS):
                 full_file_path = os.path.join(root, file)
                 file_path = remove_prefix(full_file_path, working_directory)
-                music_files.append(file_path)
 
                 path_without_extension = os.path.splitext(full_file_path)[0]
                 lyric_file = path_without_extension + ".lrc"
@@ -55,13 +53,16 @@ def find_music_files(directory):
                     file_states[file_path] = "Lyrics already present"
                 else:
                     file_states[file_path] = "Pending"
-    # file_states is ordered alphabetically but music_files is ordered by the order of the files found
-    # -> on refresh, the order of the files changes
-    return music_files
 
 
 def download_lyrics_for_music_files(music_files):
     """Download lyrics for the given list of music files."""
+
+    # remove all files that are not in the list
+    for music_file in list(file_states.keys()):
+        if music_file not in music_files:
+            del file_states[music_file]
+
     for music_file in music_files:
         global downloading
         downloading = True
@@ -69,6 +70,8 @@ def download_lyrics_for_music_files(music_files):
         try:
             if file_states[music_file] != "Pending":
                 continue
+
+            file_states[music_file] = "Downloading..."
 
             path = working_directory + music_file
             tag = TinyTag.get(path)
@@ -103,8 +106,8 @@ def index():
 def get_files():
     directory = request.json.get("directory")
     if os.path.isdir(directory):
-        music_files = find_music_files(directory)
-        return jsonify({"files": music_files, "states": file_states})
+        find_music_files(directory)
+        return jsonify({"states": file_states})
     else:
         return jsonify({"error": "Invalid directory."}), 400
 
