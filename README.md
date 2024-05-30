@@ -1,6 +1,6 @@
 # TyphoonLyrics
 
-TyphoonLyrics is a frontend for the [syncedlyrics](https://github.com/moehmeni/syncedlyrics).
+TyphoonLyrics is a frontend for [syncedlyrics](https://github.com/moehmeni/syncedlyrics).
 It uses a simple Flask web server for easy usage locally or directly on your media server.
 The goal of this project is to allow users to easily download the appropriate .lrc file for every music file they have.
 
