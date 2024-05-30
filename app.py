@@ -6,15 +6,27 @@ from tinytag import TinyTag
 
 app = Flask(__name__)
 
-MUSIC_EXTENSIONS = (".mp3", ".flac", ".wav", ".m4a")
+MUSIC_EXTENSIONS = (
+    ".flac",
+    ".opus",
+    ".ogg",
+    ".mp3",
+    ".wav",
+    ".m4a",
+    ".aac",
+    ".alac",
+    ".wma",
+    ".aiff",
+    ".aif",
+    ".aifc",
+)
 
 file_states = {}
 working_directory = ""
 downloading = False
 
 # Configuration
-delete_lyric_txt = True
-refresh_existing_lyrics = False
+delete_lyrics_txt = True
 
 
 def remove_prefix(text, prefix):
@@ -43,6 +55,8 @@ def find_music_files(directory):
                     file_states[file_path] = "Lyrics already present"
                 else:
                     file_states[file_path] = "Pending"
+    # file_states is ordered alphabetically but music_files is ordered by the order of the files found
+    # -> on refresh, the order of the files changes
     return music_files
 
 
@@ -53,11 +67,6 @@ def download_lyrics_for_music_files(music_files):
         downloading = True
 
         try:
-            if (
-                refresh_existing_lyrics
-                and file_states[music_file] == "Lyrics already present"
-            ):
-                file_states[music_file] = "Pending"
             if file_states[music_file] != "Pending":
                 continue
 
@@ -65,14 +74,8 @@ def download_lyrics_for_music_files(music_files):
             tag = TinyTag.get(path)
 
             lyrics = syncedlyrics.search("[" + tag.title + "] [" + tag.artist + "]")
-            """
-            TODO:
-            - use save_path to save the lyrics?
-            - make sure the lyrics are for the correct song
-            - compare different search results and select the best one, allow user to select a different one
-            - add karoke lyrics and translation support
-            - add option to allow for plain text lyrics
-            """
+            # TODO: use save_path to save the lyrics?
+
             if lyrics:
                 path_without_extension = os.path.splitext(path)[0]
                 lyric_file = path_without_extension + ".lrc"
@@ -80,9 +83,9 @@ def download_lyrics_for_music_files(music_files):
                     f.write(lyrics)
                 file_states[music_file] = "Downloaded"
 
-                lyric_txt_file = path_without_extension + ".txt"
-                if os.path.exists(lyric_txt_file) and delete_lyric_txt:
-                    os.remove(lyric_txt_file)
+                lyrics_txt_file = path_without_extension + ".txt"
+                if os.path.exists(lyrics_txt_file) and delete_lyrics_txt:
+                    os.remove(lyrics_txt_file)
             else:
                 file_states[music_file] = "No lyrics found"
         except Exception as e:
@@ -93,7 +96,7 @@ def download_lyrics_for_music_files(music_files):
 
 @app.route("/")
 def index():
-    return render_template("index.html", downloading= "true" if downloading else "false")
+    return render_template("index.html", downloading="true" if downloading else "false")
 
 
 @app.route("/files", methods=["POST"])
