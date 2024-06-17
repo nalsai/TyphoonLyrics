@@ -28,7 +28,7 @@ To install and run TyphoonLyrics, follow these steps:
 2. Install the required dependencies:
 
     ```sh
-    pip install Flask tinytag syncedlyrics
+    pip install -r requirements.txt
     ```
 
 3. Start the web server:
@@ -39,7 +39,7 @@ To install and run TyphoonLyrics, follow these steps:
 
 ## Usage
 
-Once the web server is running, you can access TyphoonLyrics by opening your browser and navigating to `http://localhost:5000`.
+Once the web server is running, you can access TyphoonLyrics by opening your browser and navigating to `http://localhost:2917`.
 From there, you can input the path to search for music files and download the lyrics.
 The files need to be tagged with the correct title and artist for the search to work correctly.
 

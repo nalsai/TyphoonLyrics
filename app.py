@@ -130,4 +130,7 @@ def get_states():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("Starting server at http://127.0.0.1:2917")
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=2917)
+    #app.run(debug=True)
